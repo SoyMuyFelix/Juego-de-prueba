@@ -2,19 +2,13 @@
    1. VARIABLES Y CONFIGURACIÓN GLOBAL
    ========================================= */
 :root {
-    --color-bg-primary: #ffffff;
-    --color-bg-card: #61925b;
-    --color-bg-modal: #323e51;
-    --color-text-main: #ffffff;
-    --color-text-muted: #cec8cd;
-    --color-accent: #d495b9;
-    --color-success: #10b981;
-    --color-danger: #ef4444;
-    --color-btn-alt: #475569;
-    --radio-card: 16px;
-    --radio-btn: 8px;
-    --transition-speed: 0.2s;
-}
+    --color-fondo: #071077;
+    --color-card: #886cd5d2;
+    --color-primario: #00bfe7;
+    --color-primario-hover: #cd0ae1;
+    --color-acceso: #fb00f9;
+    --color-texto: #e9f4ff;
+    --color-texto-secundario: #dfd5dd;
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
