@@ -2,12 +2,12 @@
    1. VARIABLES Y CONFIGURACIÓN GLOBAL
    ========================================= */
 :root {
-    --color-bg-primary: #83a8ff;
-    --color-bg-card: #1e293b;
-    --color-bg-modal: #1e293b;
-    --color-text-main: #f8fafc;
-    --color-text-muted: #94a3b8;
-    --color-accent: #38bdf8;
+    --color-bg-primary: #ffffff;
+    --color-bg-card: #61925b;
+    --color-bg-modal: #323e51;
+    --color-text-main: #ffffff;
+    --color-text-muted: #cec8cd;
+    --color-accent: #d495b9;
     --color-success: #10b981;
     --color-danger: #ef4444;
     --color-btn-alt: #475569;
