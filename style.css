@@ -1,0 +1,234 @@
+/* =========================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ========================================= */
+:root {
+    --color-bg-primary: #83a8ff;
+    --color-bg-card: #1e293b;
+    --color-bg-modal: #1e293b;
+    --color-text-main: #f8fafc;
+    --color-text-muted: #94a3b8;
+    --color-accent: #38bdf8;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-btn-alt: #475569;
+    --radio-card: 16px;
+    --radio-btn: 8px;
+    --transition-speed: 0.2s;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Reemplazamos el color plano por tu imagen de fondo */
+    background-image: url('fondo.jpg');
+    background-size: cover;          /* Hace que la imagen cubra toda la pantalla */
+    background-position: center;     /* Centra la imagen */
+    background-repeat: no-repeat;    /* Evita que se repita como mosaico */
+    background-attachment: fixed;    /* Fija el fondo al hacer scroll */
+    
+    color: var(--color-texto);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* =========================================
+   2. CONTENEDOR PRINCIPAL Y TARJETAS
+   ========================================= */
+.contenedor-juego {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    background-color: var(--color-bg-card);
+    border-radius: var(--radio-card);
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+/* =========================================
+   3. ENCABEZADO
+   ========================================= */
+header {
+    background-color: var(--color-bg-card);
+    padding: 15px 20px;
+    border-radius: var(--radio-card);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+#info-jugador {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+#info-jugador strong {
+    color: var(--color-text-main);
+}
+
+/* =========================================
+   4. COMPONENTES Y BOTONES
+   ========================================= */
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 15px 0;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: var(--radio-btn);
+    color: var(--color-text-main);
+    font-size: 1rem;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+
+input[type="text"]:focus {
+    border-color: var(--color-accent);
+}
+
+.btn {
+    background-color: var(--color-accent);
+    color: var(--color-bg-primary);
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--radio-btn);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity var(--transition-speed), transform var(--transition-speed);
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   5. PANTALLA DE JUEGO Y OPCIONES
+   ========================================= */
+.opciones-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-opcion {
+    background-color: #334155;
+    color: var(--color-text-main);
+    border: none;
+    padding: 12px;
+    border-radius: var(--radio-btn);
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color var(--transition-speed);
+}
+
+.btn-opcion:hover {
+    background-color: #475569;
+}
+
+#progreso-pregunta {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+#retroalimentacion {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* =========================================
+   6. RANKINGS (LOCAL Y GLOBAL / MODAL)
+   ========================================= */
+.seccion-ranking {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.seccion-ranking h3, #modal-ranking h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Estilos de las listas de ranking */
+#lista-ranking, #lista-ranking-global {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* Elementos de la lista optimizados contra solapamientos */
+#lista-ranking li, #lista-ranking-global li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid #334155;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ranking-nombre {
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-text-main);
+    margin-right: 15px;
+    word-break: break-word;
+}
+
+.ranking-puntaje {
+    text-align: right;
+    font-weight: bold;
+    color: var(--color-accent);
+    white-space: nowrap;
+}
+
+/* =========================================
+   7. MODAL DE RANKING GLOBAL
+   ========================================= */
+#modal-ranking {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 400px;
+    width: 90%;
+    background-color: var(--color-bg-modal);
+    color: var(--color-text-main);
+    padding: 25px;
+    border-radius: var(--radio-card);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    box-sizing: border-box;
+}
+
+/* =========================================
+   8. UTILIDADES
+   ========================================= */
+.oculto {
+    display: none !important;
+}

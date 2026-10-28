@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío de la Clase</title>
+    <!-- Enlazamos la hoja de estilos -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="contenedor-juego">
+        <!-- Encabezado con información del jugador y puntaje -->
+        <header>
+            <h1>🚀 Desafío Gamificado</h1>
+            <div id="info-jugador">
+                <span id="nombre-etiqueta">Jugador: <strong id="display-nombre">Aventurero</strong></span>
+                <span id="puntaje-etiqueta">Puntuación: <strong id="score">0</strong></span>
+            </div>
+        </header>
+
+        <!-- Pantalla de Inicio -->
+        <section id="pantalla-inicio" class="card">
+            <h2>🚀 Desafío Educativo</h2>
+            <p>Ingresa tu nombre para comenzar la misión:</p>
+            <input type="text" id="input-nombre" placeholder="Tu nombre..." autocomplete="off">
+            <button id="btn-comenzar" class="btn">Comenzar Misión</button>
+            <!-- Botón para ver el ranking general -->
+            <button id="btn-ver-ranking" class="btn" style="background-color: #475569; margin-top: 10px;">Ver Ranking Global 📊</button>
+        </section>
+
+        <!-- Pantalla del Juego / Pregunta (Se oculta al inicio) -->
+        <section id="pantalla-juego" class="card oculto">
+            <div id="progreso-pregunta">Pregunta 1 de 3</div>
+            <h2 id="pregunta-texto">Aquí irá el texto de la pregunta o desafío...</h2>
+            
+            <div id="opciones-contenedor" class="opciones-grid">
+                <!-- Los botones de opciones se generan automáticamente desde JavaScript -->
+            </div>
+            
+            <p id="retroalimentacion" class="oculto"></p>
+        </section>
+
+        <!-- Pantalla Final / Resultados y Ranking -->
+        <section id="pantalla-final" class="card oculto">
+            <h2>🏆 ¡Misión Cumplida!</h2>
+            <p>Has terminado el desafío, <strong id="nombre-final"></strong>.</p>
+            <p>Tu puntuación final es: <span id="score-final">0</span></p>
+            
+            <div class="seccion-ranking">
+                <h3>📊 Ranking de la Clase</h3>
+                <ul id="lista-ranking">
+                    <!-- Los puntajes se llenarán automáticamente aquí -->
+                </ul>
+            </div>
+
+            <button id="btn-reiniciar" class="btn">Jugar de Nuevo</button>
+        </section>
+    </div>
+
+    <!-- Modal o sección flotante para el Ranking Global (¡Ahora colocado antes del script!) -->
+    <div id="modal-ranking" class="card oculto" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 400px; width: 90%; z-index: 1000; background-color: #1e293b; color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <h3>📊 Ranking Global de la Clase</h3>
+        <ul id="lista-ranking-global" style="list-style: none; padding: 0; max-height: 250px; overflow-y: auto; text-align: left;">
+            <li>Cargando ranking...</li>
+        </ul>
+        <button id="btn-cerrar-ranking" class="btn" style="margin-top: 15px;">Volver</button>
+    </div>
+
+    <!-- Enlazamos la lógica en JavaScript al final de todo -->
+    <script src="script.js"></script>
+</body>
+</html>
