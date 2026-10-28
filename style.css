@@ -1,78 +1,110 @@
-/* =========================================
-   1. VARIABLES Y CONFIGURACIÓN GLOBAL
-   ========================================= */
+
 :root {
-    --color-bg-primary: #ffffff;
-    --color-bg-card: #61925b;
-    --color-bg-modal: #323e51;
-    --color-text-main: #ffffff;
-    --color-text-muted: #cec8cd;
-    --color-accent: #d495b9;
-    --color-success: #10b981;
-    --color-danger: #ef4444;
-    --color-btn-alt: #475569;
-    --radio-card: 16px;
-    --radio-btn: 8px;
-    --transition-speed: 0.2s;
+    /* Paleta Principal: Modo Oscuro con Glassmorphism */
+    --color-bg-overlay: rgba(15, 23, 42, 0.85);   /* Slate muy oscuro traslúcido */
+    --color-card-border: rgba(255, 255, 255, 0.12);/* Borde sutil brillante */
+    --color-text-main: #f8fafc;                   /* Blanco roto para máxima legibilidad */
+    --color-text-muted: #94a3b8;                  /* Gris lavanda para textos secundarios */
+    
+    /* Colores Psicológicos y CTAs (Marketing Educativo) */
+    --color-primary: #6366f1;                     /* Índigo Vibrante: Foco, tecnología e inteligencia */
+    --color-primary-hover: #4f46e5;               /* Índigo profundo al interactuar */
+    --color-secondary: #334155;                   /* Slate neutro para botones secundarios */
+    --color-secondary-hover: #475569;
+    
+    /* Respuestas y Feedback Gamificado */
+    --color-success: #10b981;                     /* Verde Esmeralda: Logro y recompensa */
+    --color-success-bg: rgba(16, 185, 129, 0.2);
+    --color-danger: #ef4444;                      /* Rojo Coral: Urgencia y error */
+    --color-danger-bg: rgba(239, 68, 68, 0.2);
+    --color-gold: #f59e0b;                        /* Dorado/Ámbar: Trofeos y puntuación */
+    
+    /* Radio de bordes y sombras */
+    --radius-card: 20px;
+    --radius-btn: 12px;
+    --shadow-main: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--color-card-border);
+}
+
+/* =========================================
+   2. RESET Y ESTILOS BASE
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Reemplazamos el color plano por tu imagen de fondo */
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* Fondo personalizado con la imagen del usuario */
     background-image: url('fondo.jpg');
-    background-size: cover;          /* Hace que la imagen cubra toda la pantalla */
-    background-position: center;     /* Centra la imagen */
-    background-repeat: no-repeat;    /* Evita que se repita como mosaico */
-    background-attachment: fixed;    /* Fija el fondo al hacer scroll */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #0f172a; /* Fallback si la imagen no se encuentra */
     
-    color: var(--color-texto);
-    margin: 0;
-    padding: 0;
+    color: var(--color-text-main);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    font-family: 'Outfit', sans-serif;
 }
 
 /* =========================================
-   2. CONTENEDOR PRINCIPAL Y TARJETAS
+   3. ESTRUCTURA Y CONTENEDOR PRINCIPAL
    ========================================= */
 .contenedor-juego {
     width: 100%;
-    max-width: 450px;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    position: relative;
+    z-index: 10;
 }
 
-.card {
-    background-color: var(--color-bg-card);
-    border-radius: var(--radio-card);
-    padding: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    text-align: center;
-}
-
-/* =========================================
-   3. ENCABEZADO
-   ========================================= */
+/* Encabezado */
 header {
-    background-color: var(--color-bg-card);
-    padding: 15px 20px;
-    border-radius: var(--radio-card);
+    background: var(--color-bg-overlay);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    padding: 14px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    font-size: 1.3rem;
 }
 
 header h1 {
-    font-size: 1.1rem;
-    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--color-text-main);
 }
 
 #info-jugador {
-    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.8rem;
     color: var(--color-text-muted);
 }
 
@@ -80,155 +112,399 @@ header h1 {
     color: var(--color-text-main);
 }
 
-/* =========================================
-   4. COMPONENTES Y BOTONES
-   ========================================= */
+#score {
+    color: var(--color-gold);
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+/*Tarjetas (Cards) con efecto Glassmorphism */
+.card {
+    background: var(--color-bg-overlay);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    padding: 28px 24px;
+    box-shadow: var(--shadow-main);
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.card-header {
+    margin-bottom: 16px;
+}
+
+.card-header h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-top: 6px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #818cf8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.badge-success {
+    background: var(--color-success-bg);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+.instrucciones {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Input para el Nombre */
+.input-group {
+    margin-bottom: 18px;
+}
+
 input[type="text"] {
     width: 100%;
-    padding: 12px 15px;
-    margin: 15px 0;
-    background-color: #0f172a;
-    border: 1px solid #334155;
-    border-radius: var(--radio-btn);
+    padding: 14px 18px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-btn);
     color: var(--color-text-main);
+    font-family: inherit;
     font-size: 1rem;
-    box-sizing: border-box;
     outline: none;
-    transition: border-color var(--transition-speed);
+    transition: all 0.2s ease;
 }
 
 input[type="text"]:focus {
-    border-color: var(--color-accent);
-}
-
-.btn {
-    background-color: var(--color-accent);
-    color: var(--color-bg-primary);
-    border: none;
-    padding: 12px 20px;
-    border-radius: var(--radio-btn);
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    transition: opacity var(--transition-speed), transform var(--transition-speed);
-}
-
-.btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    background: rgba(15, 23, 42, 0.9);
 }
 
 /* =========================================
-   5. PANTALLA DE JUEGO Y OPCIONES
+   4. BOTONES Y ACCIONES
    ========================================= */
-.opciones-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.btn-opcion {
-    background-color: #334155;
-    color: var(--color-text-main);
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
     border: none;
-    padding: 12px;
-    border-radius: var(--radio-btn);
+    border-radius: var(--radius-btn);
+    font-family: inherit;
     font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    text-align: left;
-    transition: background-color var(--transition-speed);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.btn-opcion:hover {
-    background-color: #475569;
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-text-main);
+    margin-top: 10px;
+    border: 1px solid var(--color-card-border);
+}
+
+.btn-secondary:hover {
+    background: var(--color-secondary-hover);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   5. PANTALLA DE JUEGO Y PREGUNTAS
+   ========================================= */
+.juego-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
 #progreso-pregunta {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 10px;
 }
 
-#retroalimentacion {
-    font-weight: bold;
-    margin-top: 15px;
+#temporizador-container {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* Barra de progreso */
+.barra-progreso-bg {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.barra-progreso-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-gold));
+    transition: width 1s linear;
+}
+
+#pregunta-texto {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    text-align: left;
+    color: var(--color-text-main);
+}
+
+.opciones-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-opcion {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--color-text-main);
+    padding: 14px 16px;
+    border-radius: var(--radius-btn);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.btn-opcion:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+}
+
+.btn-opcion:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Clases de respuesta correcta / incorrecta aplicadas dinámicamente */
+.btn-correcta {
+    background: var(--color-success) !important;
+    color: #ffffff !important;
+    border-color: var(--color-success) !important;
+    font-weight: 700 !important;
+}
+
+.btn-incorrecta {
+    background: var(--color-danger) !important;
+    color: #ffffff !important;
+    border-color: var(--color-danger) !important;
+}
+
+.feedback-card {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: var(--radius-btn);
+    font-weight: 700;
+    font-size: 0.95rem;
+    animation: popIn 0.2s ease;
 }
 
 /* =========================================
-   6. RANKINGS (LOCAL Y GLOBAL / MODAL)
+   6. RESULTADOS Y RANKING
    ========================================= */
+.resultado-box {
+    margin: 20px 0;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-card-border);
+}
+
+.saludo-final {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 10px;
+}
+
+.score-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+}
+
+.score-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--color-gold);
+    line-height: 1;
+    margin: 4px 0;
+}
+
+.score-unit {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
+
 .seccion-ranking {
     margin-top: 20px;
     text-align: left;
 }
 
-.seccion-ranking h3, #modal-ranking h3 {
+.seccion-ranking h3 {
     font-size: 1.1rem;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     text-align: center;
 }
 
-/* Estilos de las listas de ranking */
-#lista-ranking, #lista-ranking-global {
+.lista-scores {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 250px;
+    max-height: 220px;
     overflow-y: auto;
+    border-radius: var(--radius-btn);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-card-border);
 }
 
-/* Elementos de la lista optimizados contra solapamientos */
-#lista-ranking li, #lista-ranking-global li {
+.lista-scores li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 8px;
-    border-bottom: 1px solid #334155;
-    width: 100%;
-    box-sizing: border-box;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.9rem;
+}
+
+.lista-scores li:last-child {
+    border-bottom: none;
+}
+
+.ranking-pos {
+    font-weight: 800;
+    margin-right: 8px;
+    display: inline-block;
+    width: 24px;
 }
 
 .ranking-nombre {
-    text-align: left;
-    font-weight: 500;
     color: var(--color-text-main);
-    margin-right: 15px;
-    word-break: break-word;
 }
 
 .ranking-puntaje {
-    text-align: right;
-    font-weight: bold;
-    color: var(--color-accent);
-    white-space: nowrap;
+    color: var(--color-gold);
+    font-weight: 700;
 }
 
 /* =========================================
    7. MODAL DE RANKING GLOBAL
    ========================================= */
-#modal-ranking {
+.modal-backdrop {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 400px;
-    width: 90%;
-    background-color: var(--color-bg-modal);
-    color: var(--color-text-main);
-    padding: 25px;
-    border-radius: var(--radio-card);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    z-index: 9999;
-    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-card {
+    background: #0f172a;
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.modal-header h3 {
+    font-size: 1.3rem;
+}
+
+.modal-subtitle {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+    margin-bottom: 16px;
 }
 
 /* =========================================
-   8. UTILIDADES
+   8. UTILIDADES Y ANIMACIONES
    ========================================= */
 .oculto {
     display: none !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Personalización de barra de desplazamiento */
+.lista-scores::-webkit-scrollbar {
+    width: 6px;
+}
+.lista-scores::-webkit-scrollbar-track {
+    background: transparent;
+}
+.lista-scores::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
 }

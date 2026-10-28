@@ -1,68 +1,31 @@
-// --- BASE DE DATOS DE TU CLASE ---
-const preguntasClase = [
-    {
-        pregunta: "¿Cuál es el único mamífero capaz de volar de manera sostenida y verdadera?",
-        opciones: ["El lémur volador", "El murciélago", "La ardilla voladora", "El cuscús marsupial"],
-        correcta: 1 
-    },
-    {
-        pregunta: "¿En qué año se descubrió formalmente la tumba de Tutankamón por Howard Carter?",
-        opciones: ["1912", "1922", "1930", "1905"],
-        correcta: 1
-    },
-    {
-        pregunta: "¿Cuál es el elemento químico más abundante en el universo observable?",
-        opciones: ["Oxígeno", "Helio", "Hidrógeno", "Carbono"],
-        correcta: 2 
-    },
-    {
-        pregunta: "¿Qué filósofo griego fundó la institución conocida como 'El Liceo'?",
-        opciones: ["Platón", "Sócrates", "Aristóteles", "Pitágoras"],
-        correcta: 2 
-    },
-    {
-        pregunta: "¿Cuál es la capital actual de Kazajistán, renombrada en honor a su primer presidente?",
-        opciones: ["Almatý", "Taskent", "Biskek", "Astaná"],
-        correcta: 3 
-    },
-    {
-        pregunta: "¿Qué famoso teorema matemático afirma que no existen soluciones enteras para la ecuación $a^n + b^n = c^n$ cuando $n > 2$?",
-        opciones: ["El teorema de Pitágoras", "El último teorema de Fermat", "La conjetura de Goldbach", "El teorema de incompletitud de Gödel"],
-        correcta: 1 
-    },
-    {
-        pregunta: "¿Cuál es el nombre del punto más profundo de los océanos de la Tierra?",
-        opciones: ["Fosa de Puerto Rico", "Fosa de las Marianas", "Fosa de Java", "Fosa de las Sandwich del Sur"],
-        correcta: 1 
-    },
-    {
-        pregunta: "¿En qué obra literaria aparece por primera vez la palabra 'robot', acuñada por Josef Čapek?",
-        opciones: ["Yo, Robot", "R.U.R. (Robots Universales Rossum)", "Metrópolis", "Frankenstein"],
-        correcta: 1 
-    },
-    {
-        pregunta: "¿Cuál es la velocidad de la luz en el vacío expresada de forma aproximada?",
-        opciones: ["300,000 km/s", "150,000 km/s", "1,080,000 km/h", "30,000 km/s"],
-        correcta: 0 
-    },
-    {
-        pregunta: "¿Qué artista pintó el famoso cuadro 'Las meninas' en el año 1656?",
-        opciones: ["Francisco de Goya", "El Greco", "Diego Velázquez", "Salvador Dalí"],
-        correcta: 2 
-    }
-];
+// =================================================================
+// DESAFÍO GAMIFICADO - LÓGICA DE TRIVIA Y CONEXIÓN A LA NUBE
+// =================================================================
 
+// NOTA: El banco de preguntas se carga automáticamente desde "banco_preguntas.js"
+// mediante la variable global 'bancoPreguntasCompleto'.
+
+let preguntasClase = [];
 let indicePreguntaActual = 0;
 let puntuacion = 0;
 let nombreEstudiante = "";
 
-// Elementos del HTML
+let tiempoRestante = 30;
+let intervaloTemporizador = null;
+const TIEMPO_MAXIMO = 30;
+
+// URL de la API de Google Sheets Apps Script
+const urlGoogleSheet = "https://script.google.com/macros/s/AKfycbysQJ9hQKt14XG2Fsh6W8ORUiVnATrtYH4iT4ooBPj_3PXiBQrX4lA190ZDy7TLg7WMnA/exec";
+
+// Elementos del DOM
 const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const pantallaFinal = document.getElementById("pantalla-final");
 
 const inputNombre = document.getElementById("input-nombre");
 const btnComenzar = document.getElementById("btn-comenzar");
+const btnVerRanking = document.getElementById("btn-ver-ranking");
+
 const displayNombre = document.getElementById("display-nombre");
 const scoreDisplay = document.getElementById("score");
 const scoreFinal = document.getElementById("score-final");
@@ -72,38 +35,73 @@ const listaRanking = document.getElementById("lista-ranking");
 const preguntaTexto = document.getElementById("pregunta-texto");
 const opcionesContenedor = document.getElementById("opciones-contenedor");
 const progresoPregunta = document.getElementById("progreso-pregunta");
+const barraProgresoFill = document.getElementById("barra-progreso-fill");
 const retroalimentacion = document.getElementById("retroalimentacion");
 const btnReiniciar = document.getElementById("btn-reiniciar");
+const spanTiempoRestante = document.getElementById("tiempo-restante");
 
-// URL oficial de Google Sheets Apps Script
-const urlGoogleSheet = "https://script.google.com/macros/s/AKfycbysQJ9hQKt14XG2Fsh6W8ORUiVnATrtYH4iT4ooBPj_3PXiBQrX4lA190ZDy7TLg7WMnA/exec";
+const backdropModal = document.getElementById("backdrop-modal");
+const modalRanking = document.getElementById("modal-ranking");
+const listaRankingGlobal = document.getElementById("lista-ranking-global");
+const btnCerrarRanking = document.getElementById("btn-cerrar-ranking");
 
-// Comenzar juego
-if (btnComenzar) {
-    btnComenzar.addEventListener("click", () => {
-        nombreEstudiante = inputNombre.value.trim();
-        if (nombreEstudiante === "") {
-            alert("Por favor, ingresa tu nombre antes de comenzar.");
-            return;
-        }
-        
-        displayNombre.textContent = nombreEstudiante;
-        pantallaInicio.classList.add("oculto");
-        pantallaJuego.classList.remove("oculto");
-        
-        cargarPregunta();
-    });
-}
+// -----------------------------------------------------------------
+// 1. INICIALIZACIÓN Y COMIENZO DEL JUEGO
+// -----------------------------------------------------------------
+btnComenzar.addEventListener("click", () => {
+    nombreEstudiante = inputNombre.value.trim();
+    if (nombreEstudiante === "") {
+        alert("Por favor, ingresa tu nombre antes de comenzar.");
+        inputNombre.focus();
+        return;
+    }
 
+    // Verificar si el banco de preguntas de banco_preguntas.js se cargó correctamente
+    if (typeof bancoPreguntasCompleto === "undefined" || !Array.isArray(bancoPreguntasCompleto) || bancoPreguntasCompleto.length === 0) {
+        alert("Error: No se encontró el banco de preguntas. Asegúrate de incluir 'banco_preguntas.js' en la misma carpeta.");
+        return;
+    }
+
+    // Seleccionar 10 preguntas al azar del banco completo
+    let bancoMezclado = [...bancoPreguntasCompleto].sort(() => Math.random() - 0.5);
+    preguntasClase = bancoMezclado.slice(0, Math.min(10, bancoMezclado.length));
+
+    // Reiniciar variables de estado
+    indicePreguntaActual = 0;
+    puntuacion = 0;
+    scoreDisplay.textContent = "0";
+    displayNombre.textContent = nombreEstudiante;
+
+    // Transición de pantallas
+    pantallaInicio.classList.add("oculto");
+    pantallaJuego.classList.remove("oculto");
+
+    cargarPregunta();
+});
+
+// -----------------------------------------------------------------
+// 2. CARGAR Y MOSTRAR PREGUNTA
+// -----------------------------------------------------------------
 function cargarPregunta() {
+    clearInterval(intervaloTemporizador);
+
+    if (indicePreguntaActual >= preguntasClase.length) {
+        mostrarPantallaFinal();
+        return;
+    }
+
+    // Ocultar feedback anterior
     retroalimentacion.classList.add("oculto");
+    retroalimentacion.className = "feedback-card oculto";
+
     const actual = preguntasClase[indicePreguntaActual];
     
+    // Actualizar encabezados y progreso
     progresoPregunta.textContent = `Pregunta ${indicePreguntaActual + 1} de ${preguntasClase.length}`;
     preguntaTexto.textContent = actual.pregunta;
     
+    // Renderizar opciones
     opcionesContenedor.innerHTML = "";
-    
     actual.opciones.forEach((opcion, index) => {
         const boton = document.createElement("button");
         boton.textContent = opcion;
@@ -111,166 +109,203 @@ function cargarPregunta() {
         boton.addEventListener("click", () => verificarRespuesta(index, actual.correcta));
         opcionesContenedor.appendChild(boton);
     });
+
+    // Iniciar temporizador
+    tiempoRestante = TIEMPO_MAXIMO;
+    actualizarBarraTiempo();
+    iniciarTemporizador();
 }
 
-function verificarRespuesta(seleccionada, correcta) {
+// -----------------------------------------------------------------
+// 3. CONTROL DEL TEMPORIZADOR
+// -----------------------------------------------------------------
+function iniciarTemporizador() {
+    intervaloTemporizador = setInterval(() => {
+        tiempoRestante--;
+        actualizarBarraTiempo();
+
+        if (tiempoRestante <= 0) {
+            clearInterval(intervaloTemporizador);
+            manejarTiempoAgotado();
+        }
+    }, 1000);
+}
+
+function actualizarBarraTiempo() {
+    if (spanTiempoRestante) spanTiempoRestante.textContent = tiempoRestante;
+    if (barraProgresoFill) {
+        const porcentaje = (tiempoRestante / TIEMPO_MAXIMO) * 100;
+        barraProgresoFill.style.width = `${porcentaje}%`;
+    }
+}
+
+function manejarTiempoAgotado() {
+    deshabilitarBotones();
+
+    // Mostrar respuesta correcta
+    const actual = preguntasClase[indicePreguntaActual];
     const botones = opcionesContenedor.querySelectorAll("button");
-    botones.forEach(btn => btn.disabled = true);
+    if (botones[actual.correcta]) {
+        botones[actual.correcta].classList.add("btn-correcta");
+    }
+
+    retroalimentacion.textContent = "⏰ ¡Tiempo agotado! (0 puntos)";
+    retroalimentacion.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+    retroalimentacion.style.color = "#ef4444";
+    retroalimentacion.classList.remove("oculto");
+
+    setTimeout(() => {
+        indicePreguntaActual++;
+        cargarPregunta();
+    }, 1800);
+}
+
+// -----------------------------------------------------------------
+// 4. VERIFICAR RESPUESTA Y CÁLCULO DE PUNTAJE
+// -----------------------------------------------------------------
+function verificarRespuesta(seleccionada, correcta) {
+    clearInterval(intervaloTemporizador);
+    deshabilitarBotones();
     
+    const botones = opcionesContenedor.querySelectorAll("button");
+
     if (seleccionada === correcta) {
-        puntuacion += 10;
+        // Cálculo de puntaje por velocidad (10 pts base + hasta 20 pts según rapidez)
+        let puntosObtenidos = 10 + Math.floor((tiempoRestante / TIEMPO_MAXIMO) * 20);
+        puntuacion += puntosObtenidos;
         scoreDisplay.textContent = puntuacion;
-        retroalimentacion.textContent = "¡Correcto! 🎉 +10 puntos";
+        
+        botones[seleccionada].classList.add("btn-correcta");
+        retroalimentacion.textContent = `¡Correcto! 🎉 (+${puntosObtenidos} puntos)`;
+        retroalimentacion.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
         retroalimentacion.style.color = "#10b981";
-        botones[seleccionada].style.backgroundColor = "#10b981";
     } else {
-        retroalimentacion.textContent = "Incorrecto. ❌ La próxima será.";
+        botones[seleccionada].classList.add("btn-incorrecta");
+        if (botones[correcta]) {
+            botones[correcta].classList.add("btn-correcta");
+        }
+        retroalimentacion.textContent = "Incorrecto ❌ (0 puntos)";
+        retroalimentacion.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
         retroalimentacion.style.color = "#ef4444";
-        botones[seleccionada].style.backgroundColor = "#ef4444";
-        botones[correcta].style.backgroundColor = "#10b981";
     }
     
     retroalimentacion.classList.remove("oculto");
     
     setTimeout(() => {
         indicePreguntaActual++;
-        if (indicePreguntaActual < preguntasClase.length) {
-            cargarPregunta();
-        } else {
-            mostrarPantallaFinal();
-        }
-    }, 2000);
+        cargarPregunta();
+    }, 1800);
 }
 
-// Enviar puntaje a Google Sheets y mostrar el Ranking Global al finalizar
+function deshabilitarBotones() {
+    const botones = opcionesContenedor.querySelectorAll("button");
+    botones.forEach(btn => btn.disabled = true);
+}
+
+// -----------------------------------------------------------------
+// 5. PANTALLA FINAL Y RANKING CLOUD (GOOGLE SHEETS)
+// -----------------------------------------------------------------
 function mostrarPantallaFinal() {
     pantallaJuego.classList.add("oculto");
     pantallaFinal.classList.remove("oculto");
+    
     scoreFinal.textContent = puntuacion;
     nombreFinal.textContent = nombreEstudiante;
 
-    // 1. Enviar los datos del nuevo puntaje a Google Sheets (en segundo plano)
-    if (urlGoogleSheet !== "") {
+    // 1. Enviar resultado a Google Sheets
+    if (urlGoogleSheet && urlGoogleSheet !== "") {
         fetch(urlGoogleSheet, {
             method: "POST",
             mode: "no-cors",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-            },
-            body: JSON.stringify({
-                nombre: nombreEstudiante,
-                puntaje: puntuacion
-            })
-        }).catch(error => console.error("Error al enviar a Google Sheets:", error));
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ nombre: nombreEstudiante, puntaje: puntuacion })
+        }).catch(err => console.error("Error al enviar a Google Sheets:", err));
     }
 
-    // 2. Mostrar mensaje de carga mientras se descargan los datos de la nube
-    if (listaRanking) {
-        listaRanking.innerHTML = "<li>🔄 Actualizando ranking global...</li>";
+    // 2. Cargar ranking actualizado
+    cargarRankingGenerico(listaRanking);
+}
+
+function cargarRankingGenerico(contenedorLista) {
+    if (!contenedorLista) return;
+    contenedorLista.innerHTML = "<li>🔄 Cargando tabla de posiciones...</li>";
+
+    if (!urlGoogleSheet || urlGoogleSheet === "") {
+        contenedorLista.innerHTML = "<li>Configura la URL de Google Sheets.</li>";
+        return;
     }
 
-    // 3. Descargar el ranking actualizado desde Google Sheets para mostrarlo en la pantalla final
-    // (Damos un pequeño respiro de 1 segundo para que Google Sheets alcance a guardar el nuevo puntaje)
     setTimeout(() => {
         fetch(urlGoogleSheet)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                if (!listaRanking) return;
-                listaRanking.innerHTML = "";
-                
+                contenedorLista.innerHTML = "";
                 if (!data || data.length === 0) {
-                    listaRanking.innerHTML = "<li>No hay puntajes registrados todavía.</li>";
+                    contenedorLista.innerHTML = "<li>Sé el primero en registrar un puntaje.</li>";
                     return;
                 }
 
                 // Ordenar de mayor a menor puntaje
                 data.sort((a, b) => b.puntaje - a.puntaje);
 
-                // Dibujar la lista con las clases optimizadas para evitar solapamientos
                 data.forEach((item, index) => {
                     const li = document.createElement("li");
+                    let medalla = `#${index + 1}`;
+                    if (index === 0) medalla = "🥇";
+                    else if (index === 1) medalla = "🥈";
+                    else if (index === 2) medalla = "🥉";
+
                     li.innerHTML = `
-                        <span class="ranking-nombre">#${index + 1} &nbsp; ${item.nombre}</span> 
+                        <div>
+                            <span class="ranking-pos">${medalla}</span>
+                            <span class="ranking-nombre">${escaparHTML(item.nombre)}</span>
+                        </div>
                         <strong class="ranking-puntaje">${item.puntaje} pts</strong>
                     `;
-                    listaRanking.appendChild(li);
+                    contenedorLista.appendChild(li);
                 });
             })
-            .catch(error => {
-                console.error("Error al cargar el ranking global:", error);
-                if (listaRanking) {
-                    listaRanking.innerHTML = "<li>❌ Error al conectar con la nube.</li>";
-                }
+            .catch(err => {
+                console.error("Error al cargar ranking:", err);
+                contenedorLista.innerHTML = "<li>❌ No se pudo sincronizar con el servidor.</li>";
             });
-    }, 1000);
+    }, 800);
 }
 
-// Reiniciar juego
-if (btnReiniciar) {
-    btnReiniciar.addEventListener("click", () => {
-        indicePreguntaActual = 0;
-        puntuacion = 0;
-        scoreDisplay.textContent = 0;
-        pantallaFinal.classList.add("oculto");
-        pantallaInicio.classList.remove("oculto");
-        inputNombre.value = "";
+function escaparHTML(str) {
+    if (!str) return "";
+    return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
     });
 }
 
-// --- LÓGICA PARA VER EL RANKING GLOBAL DESDE GOOGLE SHEETS ---
-const btnVerRanking = document.getElementById("btn-ver-ranking");
-const modalRanking = document.getElementById("modal-ranking");
-const listaRankingGlobal = document.getElementById("lista-ranking-global");
-const btnCerrarRanking = document.getElementById("btn-cerrar-ranking");
+// -----------------------------------------------------------------
+// 6. EVENTOS SECUNDARIOS Y RANKING GLOBAL MODAL
+// -----------------------------------------------------------------
+btnReiniciar.addEventListener("click", () => {
+    pantallaFinal.classList.add("oculto");
+    pantallaInicio.classList.remove("oculto");
+    inputNombre.value = "";
+});
 
-if (btnVerRanking) {
+if (btnVerRanking && backdropModal) {
     btnVerRanking.addEventListener("click", () => {
-        if (pantallaInicio) pantallaInicio.classList.add("oculto");
-        if (modalRanking) modalRanking.classList.remove("oculto");
-        if (listaRankingGlobal) listaRankingGlobal.innerHTML = "<li>🔄 Cargando puntajes desde la nube...</li>";
-
-        // Consultamos los datos a Google Sheets
-        fetch(urlGoogleSheet)
-            .then(response => response.json())
-            .then(data => {
-                if (!listaRankingGlobal) return;
-                listaRankingGlobal.innerHTML = "";
-                
-                if (!data || data.length === 0) {
-                    listaRankingGlobal.innerHTML = "<li>No hay puntajes registrados todavía. ¡Sé el primero!</li>";
-                    return;
-                }
-
-                // Ordenar de mayor a menor puntaje
-                data.sort((a, b) => b.puntaje - a.puntaje);
-
-                data.forEach((item, index) => {
-                    const li = document.createElement("li");
-                    li.innerHTML = `
-                        <span class="ranking-nombre">#${index + 1} &nbsp; ${item.nombre}</span> 
-                        <strong class="ranking-puntaje">${item.puntaje} pts</strong>
-                    `;
-                    listaRankingGlobal.appendChild(li);
-                });
-            })
-            .catch(error => {
-                console.error("Error al cargar el ranking:", error);
-                if (listaRankingGlobal) {
-                    listaRankingGlobal.innerHTML = "<li>❌ Error al conectar con la nube.</li>";
-                }
-            });
+        backdropModal.classList.remove("oculto");
+        cargarRankingGenerico(listaRankingGlobal);
     });
 }
 
-if (btnCerrarRanking) {
+if (btnCerrarRanking && backdropModal) {
     btnCerrarRanking.addEventListener("click", () => {
-        if (modalRanking) modalRanking.classList.add("oculto");
-        if (pantallaInicio) pantallaInicio.classList.remove("oculto");
+        backdropModal.classList.add("oculto");
     });
 }
-if (btnCerrarRanking) {
-    btnCerrarRanking.addEventListener("click", () => {
-        if (modalRanking) modalRanking.classList.add("oculto");
-        if (pantallaInicio) pantallaInicio.classList.remove("oculto");
+
+// Cerrar modal al hacer clic en el backdrop fuera de la tarjeta
+if (backdropModal) {
+    backdropModal.addEventListener("click", (e) => {
+        if (e.target === backdropModal) {
+            backdropModal.classList.add("oculto");
+        }
     });
 }
