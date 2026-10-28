@@ -1,23 +1,53 @@
 // --- BASE DE DATOS DE TU CLASE ---
 const preguntasClase = [
     {
-        pregunta: "¿En que país se inventó la brújula?",
-        opciones: ["China", "Takataka", 'Greengoland'],
-        correcta: 0 
+        pregunta: "¿Cuál es el único mamífero capaz de volar de manera sostenida y verdadera?",
+        opciones: ["El lémur volador", "El murciélago", "La ardilla voladora", "El cuscús marsupial"],
+        correcta: 1 
     },
     {
-        pregunta: "¿Pizza, completo o arepa?",
-        opciones: ["pizza", "completo", "arepa"],
+        pregunta: "¿En qué año se descubrió formalmente la tumba de Tutankamón por Howard Carter?",
+        opciones: ["1912", "1922", "1930", "1905"],
         correcta: 1
     },
     {
-        pregunta: "¿Perros o gatos?",
-        opciones: ['perros', 'gatos', 'ambos'],
+        pregunta: "¿Cuál es el elemento químico más abundante en el universo observable?",
+        opciones: ["Oxígeno", "Helio", "Hidrógeno", "Carbono"],
         correcta: 2 
     },
     {
-        pregunta: "¿Premio o castigo?",
-        opciones: ['premio', 'castigo', 'ambos'],
+        pregunta: "¿Qué filósofo griego fundó la institución conocida como 'El Liceo'?",
+        opciones: ["Platón", "Sócrates", "Aristóteles", "Pitágoras"],
+        correcta: 2 
+    },
+    {
+        pregunta: "¿Cuál es la capital actual de Kazajistán, renombrada en honor a su primer presidente?",
+        opciones: ["Almatý", "Taskent", "Biskek", "Astaná"],
+        correcta: 3 
+    },
+    {
+        pregunta: "¿Qué famoso teorema matemático afirma que no existen soluciones enteras para la ecuación $a^n + b^n = c^n$ cuando $n > 2$?",
+        opciones: ["El teorema de Pitágoras", "El último teorema de Fermat", "La conjetura de Goldbach", "El teorema de incompletitud de Gödel"],
+        correcta: 1 
+    },
+    {
+        pregunta: "¿Cuál es el nombre del punto más profundo de los océanos de la Tierra?",
+        opciones: ["Fosa de Puerto Rico", "Fosa de las Marianas", "Fosa de Java", "Fosa de las Sandwich del Sur"],
+        correcta: 1 
+    },
+    {
+        pregunta: "¿En qué obra literaria aparece por primera vez la palabra 'robot', acuñada por Josef Čapek?",
+        opciones: ["Yo, Robot", "R.U.R. (Robots Universales Rossum)", "Metrópolis", "Frankenstein"],
+        correcta: 1 
+    },
+    {
+        pregunta: "¿Cuál es la velocidad de la luz en el vacío expresada de forma aproximada?",
+        opciones: ["300,000 km/s", "150,000 km/s", "1,080,000 km/h", "30,000 km/s"],
+        correcta: 0 
+    },
+    {
+        pregunta: "¿Qué artista pintó el famoso cuadro 'Las meninas' en el año 1656?",
+        opciones: ["Francisco de Goya", "El Greco", "Diego Velázquez", "Salvador Dalí"],
         correcta: 2 
     }
 ];
