@@ -112,14 +112,14 @@ function verificarRespuesta(seleccionada, correcta) {
     }, 2000);
 }
 
-// Guardar puntaje en el navegador, mostrar el ranking y enviarlo a Google Sheets
+// Enviar puntaje a Google Sheets y mostrar el Ranking Global al finalizar
 function mostrarPantallaFinal() {
     pantallaJuego.classList.add("oculto");
     pantallaFinal.classList.remove("oculto");
     scoreFinal.textContent = puntuacion;
     nombreFinal.textContent = nombreEstudiante;
 
-    // 1. Enviar los datos a Google Sheets
+    // 1. Enviar los datos del nuevo puntaje a Google Sheets (en segundo plano)
     if (urlGoogleSheet !== "") {
         fetch(urlGoogleSheet, {
             method: "POST",
@@ -134,23 +134,45 @@ function mostrarPantallaFinal() {
         }).catch(error => console.error("Error al enviar a Google Sheets:", error));
     }
 
-    // 2. Obtener ranking guardado localmente en el navegador
-    let ranking = JSON.parse(localStorage.getItem("rankingClase")) || [];
-
-    // 3. Agregar el nuevo puntaje y ordenar
-    ranking.push({ nombre: nombreEstudiante, puntaje: puntuacion });
-    ranking.sort((a, b) => b.puntaje - a.puntaje);
-    localStorage.setItem("rankingClase", JSON.stringify(ranking));
-
-    // 4. Dibujar la lista local en el HTML
+    // 2. Mostrar mensaje de carga mientras se descargan los datos de la nube
     if (listaRanking) {
-        listaRanking.innerHTML = "";
-        ranking.forEach((item, index) => {
-            const li = document.createElement("li");
-            li.innerHTML = `<span>#${index + 1} ${item.nombre}</span> <strong>${item.puntaje} pts</strong>`;
-            listaRanking.appendChild(li);
-        });
+        listaRanking.innerHTML = "<li>🔄 Actualizando ranking global...</li>";
     }
+
+    // 3. Descargar el ranking actualizado desde Google Sheets para mostrarlo en la pantalla final
+    // (Damos un pequeño respiro de 1 segundo para que Google Sheets alcance a guardar el nuevo puntaje)
+    setTimeout(() => {
+        fetch(urlGoogleSheet)
+            .then(response => response.json())
+            .then(data => {
+                if (!listaRanking) return;
+                listaRanking.innerHTML = "";
+                
+                if (!data || data.length === 0) {
+                    listaRanking.innerHTML = "<li>No hay puntajes registrados todavía.</li>";
+                    return;
+                }
+
+                // Ordenar de mayor a menor puntaje
+                data.sort((a, b) => b.puntaje - a.puntaje);
+
+                // Dibujar la lista con las clases optimizadas para evitar solapamientos
+                data.forEach((item, index) => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <span class="ranking-nombre">#${index + 1} &nbsp; ${item.nombre}</span> 
+                        <strong class="ranking-puntaje">${item.puntaje} pts</strong>
+                    `;
+                    listaRanking.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar el ranking global:", error);
+                if (listaRanking) {
+                    listaRanking.innerHTML = "<li>❌ Error al conectar con la nube.</li>";
+                }
+            });
+    }, 1000);
 }
 
 // Reiniciar juego
